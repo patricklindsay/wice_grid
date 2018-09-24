@@ -1,11 +1,30 @@
+# Rails 5+ Version of WiceGrid.
+
+Yuri no longer maintains WiceGrid & the latest published version (3.6.2) is not compatible with Rails 5.
+This fork has been made to support Rails 5+.
+
+## Usage
+```
+# Rails => 5
+gem 'wice_grid', git: 'https://github.com/patricklindsay/wice_grid.git', tag: 'v4.0.1'
+
+# Rails < 5
+gem 'wice_grid', '3.6.2'
+```
+
+## What has changed since you forked?
+* Removed old 'development', 'master' & 'modernization' branches
+* Renamed 'Rails3' branch to 'master' and made this default
+* [Diff between the latest wice_grid (Edge) & this fork](https://github.com/leikind/wice_grid/compare/leikind:rails3...patricklindsay:master)
+* [Diff between last wice_grid published version (3.6.2) & this fork](https://github.com/leikind/wice_grid/compare/cd21a0ec93c4b55013ebddf8cbcc13df9acf20e9...patricklindsay:master)
+* Checkout [CHANGELOG.md](https://github.com/patricklindsay/wice_grid/blob/master/CHANGELOG.md) for more information.
+
+-------------------------------
+
 [![Version](http://img.shields.io/gem/v/wice_grid.svg)](https://rubygems.org/gems/wice_grid)
 [![Build](https://travis-ci.org/leikind/wice_grid.svg)](https://travis-ci.org/leikind/wice_grid)
 [![Inline docs](http://inch-ci.org/github/leikind/wice_grid.svg?branch=rails3)](http://inch-ci.org/github/leikind/wice_grid/branch/rails3)
 [![License](http://img.shields.io/badge/license-MIT-yellowgreen.svg)](#license)
-
-<!-- let's disable for a while ;-)
-[![Coverage Status](https://coveralls.io/repos/leikind/wice_grid/badge.svg?branch=development&service=github)](https://coveralls.io/github/leikind/wice_grid?branch=development)
--->
 
 THE PROJECT IS LOOKING FOR CONTRIBUTORS. THE AUTHOR WILL NOT WORK ON IT ANYMORE!
 
@@ -30,12 +49,14 @@ http://wicegrid.herokuapp.com, or just view the code: https://github.com/leikind
   - [Joined associations referring to the same table](#joined-associations-referring-to-the-same-table)
   - [More than one grid on a page](#more-than-one_grid-on-a-page)
   - [Custom Ordering](#custom-ordering)
+  - [Custom Sorting](#custom-sorting)  
 - [Filters](#filters)
   - [Custom dropdown filters](#custom-dropdown-filters)
   - [Numeric Filters](#numeric-filters)
   - [Date and DateTime Filters](#date-and-datetime-filters)
   - [Detached Filters](#detached-filters)
 - [Defaults](#defaults)
+- [Testing](#testing)
 - [Bug reports](#bug-reports)
 
 
@@ -550,36 +571,70 @@ The name can only contain alphanumeric characters.
 It is possible to change the way results are ordered injecting a chunk of SQL code, for example, use
 `ORDER BY INET_ATON(ip_address)` instead of `ORDER BY ip_address`.
 
-To do so, provide parameter `:custom_order` in the initialization of the grid with a hash where
-keys are fully qualified names of database columns, and values the required chunks of SQL to use in the
-`ORDER BY` clause.
+To do so, provide parameter `:custom_order` in the initialization of the grid with a `Hash` where
+keys are fully qualified names of database columns, and values are anything that can be passed to ActiveRecord's
+`order` method (without specifying `ASC` or `DESC`.)
 
-For example:
+#### String
 
-```ruby
-@hosts_grid = initialize_grid(Host,
-  custom_order: {
-    'hosts.ip_address' => 'INET_ATON(hosts.ip_address)'
-  })
-```
-
-It is possible to use the '?' character instead of the name of the column in the hash value:
+Starting in Rails 5.2, you may need to whitelist `String` values with `Arel.sql` 
+to avoid a warning or error.
 
 ```ruby
 @hosts_grid = initialize_grid(Host,
   custom_order: {
-    'hosts.ip_address' => 'INET_ATON( ? )'
+    'hosts.ip_address' => Arel.sql('INET_ATON(hosts.ip_address)')
   })
 ```
 
-Values can also be Proc objects. The parameter supplied to such a Proc object is the name of the column:
+It is possible to use `?` instead of the name of the column in the `Hash` value:
 
 ```ruby
 @hosts_grid = initialize_grid(Host,
   custom_order: {
-    'hosts.ip_address' => lambda{|f| "INET_ATON( #{f} )"}
+    'hosts.ip_address' => Arel.sql('INET_ATON( ? )')
   })
 ```
+
+#### Arel::Attributes::Attribute
+
+Assuming you wish to display `hosts.ip_address` but sort by another column named `hosts.ip_address_number`:
+
+```ruby
+@hosts_grid = initialize_grid(Host,
+  custom_order: {
+    'hosts.ip_address' => Arel::Table.new(:hosts)[:ip_address_number]
+  })
+```
+
+#### Proc
+
+You can use a `Proc` to return a `String` or `Arel::Attributes::Attribute` as above.
+
+```ruby
+@hosts_grid = initialize_grid(Host,
+  custom_order: {
+    'hosts.ip_address' => lambda{|f| Arel.sql(request[:numeric_sorting] ? "INET_ATON( #{f} )" : f) }
+  })
+```
+
+### Custom Sorting
+
+While `:custom_order` lets you define SQL that determines the results order, you may want to sort the result by arbritrary Ruby code. The `:sort_by` option on columns lets you define a `Proc` that determines the sorting on that column. This `Proc` is passed to Ruby's `Enumerable#sort_by`.
+
+```ruby
+grid.column name:  'Status Name', attribute: 'name', sort_by: ->(status) { [status.number_of_vowels, status] }
+```
+
+You can also use `:sort_by` to add sorting on values that are not columns in the database. In this case, you must also define an arbitrary `:attribute` option that serves as the request's sort key parameter.
+
+```ruby
+grid.column name: 'Task Count', attribute: 'task_count', sort_by: ->(status) { status.tasks.count } do |status|
+  status.tasks.count
+end
+```
+
+Note that `sort_by` will load all records into memory to sort them (even the ones not on the current page), so it may not be appropriate for use with a large number of results.
 
 ## Filters
 
@@ -1511,6 +1566,20 @@ def index
   end
 end
 ```
+
+## Testing
+
+To run tests:
+
+1. `git clone https://github.com/patricklindsay/wice_grid.git`
+2. `cd wice_grid`
+3. `bundle`
+4. Install phantomjs (e.g. `brew install phantomjs` or `apt-get install phantomjs` or something else)
+5. `bundle exec appraisal rspec`
+
+Tests against Rails 5.0, 5.1 & 5.2. To test against a specific version, for example Rails 5.2 run `bundle exec appraisal rails-5.2 rspec`
+
+This repository contains a Rails application for testing purposes. To fire up this application manually, run `cd spec/support/test_app/bin; RAILS_ENV=test rails s`.
 
 ## Bug reports
 

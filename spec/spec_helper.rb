@@ -18,16 +18,18 @@
 # See http://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration
 
 require 'rspec'
-require 'coveralls'
-require 'codeclimate-test-reporter'
 require 'simplecov'
+require 'byebug'
 
-SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter[
-    Coveralls::SimpleCov::Formatter,
-    SimpleCov::Formatter::HTMLFormatter,
-    CodeClimate::TestReporter::Formatter
-]
-SimpleCov.start
+SimpleCov.start do
+  formatter = SimpleCov::Formatter::MultiFormatter.new([
+    SimpleCov::Formatter::HTMLFormatter
+  ])
+
+  add_filter "/spec/"
+
+  minimum_coverage 87.53
+end
 
 begin
   require 'support/active_record'
@@ -42,7 +44,6 @@ end
 
 $LOAD_PATH.unshift(File.expand_path(File.dirname(__FILE__) + '/../lib'))
 require 'wice_grid'
-require 'support/wice_grid_test_config'
 
 ActiveRecord::ConnectionAdapters::Column.send(:include, ::Wice::WiceGridExtentionToActiveRecordColumn)
 

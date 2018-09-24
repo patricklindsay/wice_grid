@@ -1,10 +1,30 @@
-# 3.6.3
+## Unreleased
+
+* Add option `filter_control_options` to columns. Initial use is to pass in the options `start_year`, `end_year`, and `max_year_allowed` when using `rails_datetime_helper` - [#12](https://github.com/patricklindsay/wice_grid/pull/18)
+* Fix deprecation (in Rails 5.0.x) and incorrect behaviour (in Rails 5.1.x) of CSV exports - [#4](https://github.com/patricklindsay/wice_grid/pull/4)
+* Fix deprecation (in Rails 5.2) regarding "Dangerous query methods" in `order` clauses. Note that when using the `custom_order` option you must pass a value acceptable for ActiveRecord's `order` method, otherwise you will receive the same warning. - [#41](https://github.com/patricklindsay/wice_grid/pull/41)
+* Add support for using `Arel::Attributes::Attribute`s with the `custom_order` option. - [#41](https://github.com/patricklindsay/wice_grid/pull/41)
+* Added `sort_by` option to column to allow arbitrary, Ruby-based ordering. - [#3](https://github.com/patricklindsay/wice_grid/pull/3)
+* Added Rails 5.2 support
+
+## 4.0.1 (31 May, 2018)
+
+* Fixed tagbuilder issue with Rails 5.0.x - [#1](https://github.com/patricklindsay/wice_grid/pull/1)
+* Moved testbed into repo - [#12](https://github.com/patricklindsay/wice_grid/pull/12)
+* Remove old release notes and empty /test directory
+* Removed `Gemfile.lock` from `.gitignore`
+* Removed `codeclimate-test-reporter` dev dependancy
+
+## 4.0.0 (18 Jan, 2018)
+
+### Rails 5.0 & 5.1 Support
+Added support for Rails 5.0 & 5.1. Anything below Rails 5 is no longer supported.
 
 ### Focused Filter Has Cursor/Caret at the End of Input
 
 The cursor/caret used to appear at the beginning of the focused autocomplete in FF and IE.
 This caused annoyances for users of those browsers who typed slowly since the page would
-reload and when they startd typing again the text would appear before their last entries.
+reload and when they started typing again the text would appear before their last entries.
 
 For example if someone was searching for 'john' but paused after 'joh', they would end up typing 'njoh', instead of 'john'. If they weren't paying attention,
 they might think there is no 'john', when they'd mistakenly searched for 'njoh'.
@@ -12,7 +32,7 @@ they might think there is no 'john', when they'd mistakenly searched for 'njoh'.
 ### Turbolinks 5 Support
 Handled by initializing WiceGrid on `turbolinks:render` as well as `page:load ready`
 
-# 3.6.0
+## 3.6.0
 
 ## New API For Joined Tables
 
