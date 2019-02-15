@@ -18,9 +18,6 @@ build_job: &build_job
       name: Restore bundle cache
       key: wice_grid-{{ checksum "Gemfile.lock" }}
 
-    - run: gem update bundler
-    - run: bundle update --bundler
-
     # Bundle install dependencies
     - run: bundle install --path vendor/bundle
 
@@ -63,9 +60,6 @@ jobs:
       - type: cache-restore
         name: Restore bundle cache
         key: wice_grid-{{ checksum "Gemfile.lock" }}
-
-      - run: gem update bundler
-      - run: bundle update --bundler
 
       # Bundle install dependencies
       - run: bundle install --path vendor/bundle
