@@ -42,6 +42,8 @@ version: 2
 jobs:
   build-ruby24:
     <<: *build_job
+      # Rails 6 does not support Ruby 2.4
+      - run: bundle exec appraisal rails-5.0 rails-5.1 rails-5.2 rspec
     docker:
       - image: circleci/ruby:2.4
         environment:

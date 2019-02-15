@@ -1,3 +1,5 @@
+require 'action_view/helpers'
+
 module Wice
 
   # Instance of `GridRenderer` is injected into the top level block of the `grid` helper.
