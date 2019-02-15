@@ -65,7 +65,7 @@ jobs:
       - run: bundle install --path vendor/bundle
 
       # Install Appraisal gemfiles
-      - run: bundle exec appraisal install
+      - run: bundle exec appraisal rails-5.0 rails-5.1 rails-5.2 install
 
       # Cache Dependencies
       - type: cache-save
