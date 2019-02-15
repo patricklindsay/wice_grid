@@ -65,7 +65,9 @@ jobs:
       - run: bundle install --path vendor/bundle
 
       # Install Appraisal gemfiles
-      - run: bundle exec appraisal rails-5.0 rails-5.1 rails-5.2 install
+      - run: bundle exec appraisal rails-5.0 bundle install
+      - run: bundle exec appraisal rails-5.1 bundle install
+      - run: bundle exec appraisal rails-5.2 bundle install
 
       # Cache Dependencies
       - type: cache-save
@@ -75,7 +77,9 @@ jobs:
           - vendor/bundle
 
       # Run the tests
-      - run: undle exec appraisal rails-5.0 rails-5.1 rails-5.2 rspec
+      - run: bundle exec appraisal rails-5.0 rspec
+      - run: bundle exec appraisal rails-5.1 rspec
+      - run: bundle exec appraisal rails-5.2 rspec
 
       - store_artifacts:
           path: spec/support/test_app/tmp/capybara
