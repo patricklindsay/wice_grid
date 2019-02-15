@@ -1,49 +1,55 @@
-build_job: &build_job
-  working_directory: ~/wice_grid
-  steps:
-    - checkout
+steps: &steps
+  - checkout
 
-    # Install PhantomJS (if not found in cache)
-    - run:
-        name: Install phantomjs
-        command: |
-          if ! [ $(which phantomjs) ]; then
-          sudo curl --output /usr/local/bin/phantomjs https://s3.amazonaws.com/circle-downloads/phantomjs-2.1.1
-          fi
+  # Install PhantomJS (if not found in cache)
+  - run:
+      name: Install phantomjs
+      command: |
+        if ! [ $(which phantomjs) ]; then
+        sudo curl --output /usr/local/bin/phantomjs https://s3.amazonaws.com/circle-downloads/phantomjs-2.1.1
+        fi
 
-          sudo chmod ugo+x /usr/local/bin/phantomjs
+        sudo chmod ugo+x /usr/local/bin/phantomjs
 
-    # Restore Cached Dependencies
-    - type: cache-restore
-      name: Restore bundle cache
-      key: wice_grid-{{ checksum "Gemfile.lock" }}
+  # Restore Cached Dependencies
+  - type: cache-restore
+    name: Restore bundle cache
+    key: wice_grid-{{ checksum "Gemfile.lock" }}
 
-    # Bundle install dependencies
-    - run: bundle install --path vendor/bundle
+  # Bundle install dependencies
+  - run: bundle install --path vendor/bundle
 
-    # Install Appraisal gemfiles
-    - run: bundle exec appraisal install
+  # Install Appraisal gemfiles
+  - run: bundle exec appraisal install
 
-    # Cache Dependencies
-    - type: cache-save
-      name: Store bundle cache
-      key: wice_grid-{{ checksum "Gemfile.lock" }}
-      paths:
+  # Cache Dependencies
+  - type: cache-save
+    name: Store bundle cache
+    key: wice_grid-{{ checksum "Gemfile.lock" }}
+    paths:
       - vendor/bundle
 
-    # Run the tests
-    - run: bundle exec appraisal rspec
+  # Run the tests
+  - run: bundle exec appraisal rspec
 
-    - store_artifacts:
-        path: spec/support/test_app/tmp/capybara
-        destination: screenshots
+  - store_artifacts:
+      path: spec/support/test_app/tmp/capybara
+      destination: screenshots
+
+
+build_job: &build_job
+  working_directory: ~/wice_grid
+  steps: *steps
+
 
 version: 2
 jobs:
   build-ruby24:
-    <<: *build_job
-      # Rails 6 does not support Ruby 2.4
-      - run: bundle exec appraisal rails-5.0 rails-5.1 rails-5.2 rspec
+    working_directory: ~/wice_grid
+    steps:
+      <<: *steps
+      # Rails 6 does not work with Ruby 2.4
+      run: bundle exec appraisal rails-5.0 rails-5.1 rails-5.2 rspec
     docker:
       - image: circleci/ruby:2.4
         environment:
