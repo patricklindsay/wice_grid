@@ -47,9 +47,9 @@ jobs:
   build-ruby24:
     working_directory: ~/wice_grid
     steps:
-      <<: *steps
+      - *steps
       # Rails 6 does not work with Ruby 2.4
-      run: bundle exec appraisal rails-5.0 rails-5.1 rails-5.2 rspec
+      - run: bundle exec appraisal rails-5.0 rails-5.1 rails-5.2 rspec
     docker:
       - image: circleci/ruby:2.4
         environment:
