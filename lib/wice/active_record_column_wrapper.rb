@@ -118,5 +118,9 @@ module Wice
     def alias_or_table_name(table_alias) #:nodoc:
       table_alias || @column.model.table_name
     end
+
+    def type
+      @column.type
+    end
   end
 end
