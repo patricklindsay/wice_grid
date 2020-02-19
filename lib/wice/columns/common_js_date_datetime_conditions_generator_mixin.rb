@@ -4,24 +4,27 @@ module Wice
 
       def generate_conditions(table_alias, opts)   #:nodoc:
 
-        datetime = @column_type == :datetime || @column_type == :timestamp
+        # Is this a datetime based column?
+        datetime = @column_wrapper.type == :datetime
 
         conditions = [[]]
         if opts[:fr]
           conditions[0] << " #{@column_wrapper.alias_or_table_name(table_alias)}.#{@column_wrapper.name} >= ? "
-          date = opts[:fr].to_date
-          if datetime
-            date = date.to_datetime
+          date = if datetime
+            opts[:fr].to_datetime
+          else
+            opts[:fr].to_date
           end
           conditions << date
         end
 
         if opts[:to]
           op = '<='
-          date = opts[:to].to_date
           if datetime
-            date = (date + 1).to_datetime
+            date = (opts[:to] + 1.day).to_datetime
             op = '<'
+          else
+            date = opts[:to].to_date
           end
           conditions[0] << " #{@column_wrapper.alias_or_table_name(table_alias)}.#{@column_wrapper.name} #{op} ? "
           conditions << date
