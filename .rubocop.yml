@@ -9,12 +9,12 @@ Style/DefWithParentheses:
   Enabled: true
 
 # Cop supports --auto-correct.
-Style/MethodCallParentheses:
+Style/MethodCallWithoutArgsParentheses:
   Enabled: true
 
 # Cop supports --auto-correct.
 # Configuration parameters: EnforcedStyleInsidePipes, SupportedStyles.
-Style/SpaceAroundBlockParameters:
+Layout/SpaceAroundBlockParameters:
   Enabled: true
 
 # Cop supports --auto-correct.
@@ -24,16 +24,16 @@ Style/TrailingCommaInArguments:
 
 # Cop supports --auto-correct.
 # Configuration parameters: EnforcedStyleForMultiline, SupportedStyles.
-Style/TrailingCommaInLiteral:
+Style/TrailingCommaInArrayLiteral:
   EnforcedStyleForMultiline: no_comma
 
 # Cop supports --auto-correct.
-Style/SpaceBeforeFirstArg:
+Layout/SpaceBeforeFirstArg:
   Enabled: true
 
 # Cop supports --auto-correct.
 # Configuration parameters: EnforcedStyle, SupportedStyles.
-Style/FirstParameterIndentation:
+Layout/FirstParameterIndentation:
   Enabled: true
 
 # Cop supports --auto-correct.
@@ -78,7 +78,7 @@ Style/RedundantReturn:
   Enabled: true
 
 # Cop supports --auto-correct.
-Style/SpaceAfterComma:
+Layout/SpaceAfterComma:
   Enabled: true
 
 # Cop supports --auto-correct.
@@ -110,7 +110,7 @@ Lint/UnusedMethodArgument:
   Enabled: true
 
 # Cop supports --auto-correct.
-Style/AlignArray:
+Layout/ArrayAlignment:
   Enabled: true
 
 # Cop supports --auto-correct.
@@ -123,7 +123,7 @@ Lint/UnusedBlockArgument:
 
 # Cop supports --auto-correct.
 # Configuration parameters: EnforcedStyle, SupportedStyles.
-Style/DotPosition:
+Layout/DotPosition:
   Enabled: true
 
 # Cop supports --auto-correct.
@@ -133,29 +133,24 @@ Style/EmptyElse:
 
 # Cop supports --auto-correct.
 # Configuration parameters: MultiSpaceAllowedForOperators.
-Style/SpaceAroundOperators:
+Layout/SpaceAroundOperators:
   Enabled: true
 
 # Cop supports --auto-correct.
-Style/SpaceBeforeComma:
+Layout/SpaceBeforeComma:
   Enabled: true
 
 # Cop supports --auto-correct.
-Style/SpaceInsideParens:
+Layout/SpaceInsideParens:
   Enabled: true
 
 # Cop supports --auto-correct.
-Style/DeprecatedHashMethods:
+Style/PreferredHashMethods:
   Enabled: true
 
 # Cop supports --auto-correct.
 # Configuration parameters: EnforcedStyle, SupportedStyles, ProceduralMethods, FunctionalMethods, IgnoredMethods.
 Style/BlockDelimiters:
-  Enabled: true
-
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle, SupportedStyles.
-Style/BracesAroundHashParameters:
   Enabled: true
 
 Lint/AmbiguousRegexpLiteral:
@@ -179,8 +174,8 @@ Style/ClassCheck:
 
 # Cop supports --auto-correct.
 # Configuration parameters: EnforcedStyle, SupportedStyles.
-Style/AlignParameters:
+Layout/ParameterAlignment:
   Enabled: true
 
-Lint/ConditionPosition:
+Layout/ConditionPosition:
   Enabled: true
